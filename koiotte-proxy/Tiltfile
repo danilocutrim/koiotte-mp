@@ -1,0 +1,52 @@
+# -*- mode: Python -*-
+
+project_name = 'Koiotte-proxy'
+
+load('ext://restart_process', 'docker_build_with_restart')
+
+# Compila o binário Go localmente (hot reload rápido, sem rebuild de imagem).
+local_resource(
+    'koiotte-proxy-mp-compile',
+    'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/koiotte-proxy-mp ./cmd/server',
+    deps=[
+        'management-plane/cmd',
+        'management-plane/internal',
+        'management-plane/go.mod',
+        'management-plane/go.sum',
+    ],
+    dir='management-plane',
+    labels=project_name + '-compile',
+)
+
+docker_build_with_restart(
+    'koiotte-proxy-mp-image',
+    'management-plane/build',
+    entrypoint=['/usr/local/bin/koiotte-proxy-mp'],
+    dockerfile='.tilt/mp-tilt.dockerfile',
+    live_update=[
+        sync('management-plane/build/koiotte-proxy-mp', '/usr/local/bin/koiotte-proxy-mp'),
+    ],
+)
+
+# Manifest com o hash do koiotte-tilt.yaml: editar a config faz rollout do MP também.
+cfg = load_dynamic(os.path.join(config.main_dir, 'dev-local', 'tilt', 'lib', 'config.tiltfile'))
+k8s_yaml(cfg['with_config_hash']([os.path.abspath('.tilt/koiotte-proxy-mp-tilt.yaml')]))
+k8s_resource(
+    'koiotte-proxy-mp',
+    port_forwards=['8080:8080', '18000:18000'],
+    resource_deps=['koiotte-proxy-mp-compile', 'koiotte-engine', 'koiotte-storage'],
+    labels=project_name + '-pods',
+)
+
+# Tier Envoy edge (ADR-001): entrada única na frente do engine, alimentado pelo MP via ADS.
+# O port-forward 8081:10000 aponta para o edge — localhost:8081 reproduz o caminho de producao.
+k8s_yaml([
+    '.tilt/koiotte-proxy-envoy-configmap.yaml',
+    '.tilt/koiotte-proxy-envoy-tilt.yaml',
+])
+k8s_resource(
+    'koiotte-proxy-envoy',
+    port_forwards=['8081:10000'],
+    resource_deps=['koiotte-proxy-mp'],
+    labels=project_name + '-pods',
+)

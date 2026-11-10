@@ -1,0 +1,16 @@
+# Config mínima para a stack de teste isolada do koiotte-proxy (koiotte-proxy/docker/docker-compose.yml).
+# Só a seção consumida pelo Management Plane é necessária aqui. Esta stack junta a rede
+# externa `compose_koiotte-net` do compose principal (dev-local/docker/compose) para
+# alcançar o Koiotte Engine real (koiotte-app-1:8081) no modo "virtual"; httpbin (serviço
+# desta stack) é usado só como upstream "real" fake nos cenários do smoke-test.sh.
+version: 1
+
+proxy:
+  management-plane:
+    api-port: 8080
+    xds-port: 18000
+    engine-host: koiotte-app-1
+    engine-port: 8081
+    database:
+      driver: sqlite
+      dsn: "file:/data/koiotte-proxy.db?_pragma=busy_timeout(5000)"

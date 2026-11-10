@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "additionalDirectories": ["../dev-local"],
+    "deny": [
+      "Read(./management-plane/server)"
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+name: koiotte-proxy
+
+services:
+  httpbin:
+    image: kennethreitz/httpbin
+    container_name: koiotte-proxy-httpbin
+    networks: [koiotte]
+
+  koiotte-proxy-mp:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: koiotte-proxy-mp
+    environment:
+      KOIOTTE_CONFIG: /etc/koiotte/koiotte.yaml
+    volumes:
+      - kp-data:/data
+      - ./koiotte.yaml:/etc/koiotte/koiotte.yaml:ro
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    networks: [koiotte]
+
+  envoy:
+    image: envoyproxy/envoy:v1.29-latest
+    container_name: koiotte-proxy-envoy
+    depends_on:
+      koiotte-proxy-mp:
+        condition: service_healthy
+    command: ["-c", "/etc/envoy/bootstrap.yaml", "--service-node", "koiotte-proxy", "--service-cluster", "koiotte-proxy"]
+    volumes:
+      - ../envoy/bootstrap.yaml:/etc/envoy/bootstrap.yaml:ro
+    ports:
+      - "10000:10000"
+    networks: [koiotte]
+
+volumes:
+  kp-data:
+
+# Network created by the koiotte compose (project 'compose'). Verify with 'docker network ls'; adjust if the project name differs.
+networks:
+  koiotte:
+    external: true
+    name: compose_koiotte-net
