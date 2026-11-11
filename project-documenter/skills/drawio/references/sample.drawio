@@ -1,0 +1,28 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="orders-architecture" id="d1">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" page="1" pageWidth="1100" pageHeight="700">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="grp-backend" value="Backend (us-east-1)" style="swimlane;startSize=24;html=1;fillColor=none;dashed=1;strokeColor=#147EBA;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="40" width="520" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="client" value="Cliente" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="orderSvc" value="order-service&#xa;(Kotlin)" tooltip="Spring Boot, porta 8080" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="60" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ordersQueue" value="orders-queue&#xa;(SQS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7157B;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="grp-backend">
+          <mxGeometry x="240" y="60" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" edge="1" parent="1" source="client" target="orderSvc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" value="evento" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;dashed=1;" edge="1" parent="1" source="orderSvc" target="ordersQueue">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

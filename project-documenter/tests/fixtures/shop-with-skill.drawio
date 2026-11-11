@@ -1,0 +1,100 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="shop — Arquitetura" id="architecture-shop">
+    <mxGraphModel grid="1" gridSize="10" page="1" pageWidth="1150" pageHeight="700">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Clientes (col 0) -->
+        <mxCell id="adminBackoffice" value="Admin backoffice&lt;br&gt;(React)" tooltip="Equipe interna cadastra produtos e usuários" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="webClient" value="Cliente web&lt;br&gt;(React)" tooltip="Navegador do cliente" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="mobileApp" value="App mobile&lt;br&gt;(Kotlin)" tooltip="Aplicativo do cliente" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Entrada (col 1) -->
+        <mxCell id="apiGateway" value="API Gateway&lt;br&gt;(Go)" tooltip="Porta de entrada de web e mobile" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="260" y="360" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Serviços (col 2) -->
+        <mxCell id="catalogSvc" value="Catalog Service&lt;br&gt;(Python)" tooltip="Catálogo de produtos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="480" y="40" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="authSvc" value="Auth Service&lt;br&gt;(Kotlin)" tooltip="Login e tokens" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="480" y="200" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="orderSvc" value="Order Service&lt;br&gt;(Kotlin)" tooltip="Pedidos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="480" y="360" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="paymentSvc" value="Payment Service&lt;br&gt;(Kotlin)" tooltip="Cobrança" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="480" y="560" width="130" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Dados e filas (col 3) -->
+        <mxCell id="redis" value="Redis" tooltip="Cache do catálogo" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#C925D1;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="40" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="postgres" value="Postgres" tooltip="Banco de pedidos" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#C925D1;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="260" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="kafka" value="Kafka" tooltip="Eventos de pedido" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7157B;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="440" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Consumidor e externos (col 4) -->
+        <mxCell id="notificationWorker" value="Notification Worker&lt;br&gt;(Go)" tooltip="Envia e-mails de pedido" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="920" y="440" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="paymentGateway" value="Gateway de pagamento&lt;br&gt;(externo)" tooltip="Processa cartões" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="560" width="170" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Arestas -->
+        <mxCell id="e-webClient-apiGateway" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="webClient" target="apiGateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-mobileApp-apiGateway" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="mobileApp" target="apiGateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-apiGateway-catalogSvc" value="catálogo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="apiGateway" target="catalogSvc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-apiGateway-authSvc" value="login/token" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="apiGateway" target="authSvc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-apiGateway-orderSvc" value="pedidos" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="apiGateway" target="orderSvc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-adminBackoffice-catalogSvc" value="CRUD produtos" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="adminBackoffice" target="catalogSvc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-adminBackoffice-authSvc" value="usuários" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="adminBackoffice" target="authSvc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-catalogSvc-redis" value="lê/escreve" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="catalogSvc" target="redis">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-orderSvc-postgres" value="grava" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="orderSvc" target="postgres">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-orderSvc-kafka" value="publica evento" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;dashed=1;" edge="1" parent="1" source="orderSvc" target="kafka">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-orderSvc-paymentSvc" value="cobrança" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="orderSvc" target="paymentSvc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-kafka-notificationWorker" value="consome" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;dashed=1;" edge="1" parent="1" source="kafka" target="notificationWorker">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-paymentSvc-paymentGateway" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" edge="1" parent="1" source="paymentSvc" target="paymentGateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

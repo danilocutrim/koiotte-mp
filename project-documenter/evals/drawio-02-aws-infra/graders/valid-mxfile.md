@@ -1,0 +1,6 @@
+---
+type: regex
+match: contains
+target: {source: file, path: docs/diagrams/orders/infra-orders.drawio}
+---
+<mxfile[\s\S]*<mxGraphModel[\s\S]*</mxfile>

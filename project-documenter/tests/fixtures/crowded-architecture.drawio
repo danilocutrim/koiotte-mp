@@ -1,0 +1,132 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="platform-architecture" id="d1">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" page="1" pageWidth="1200" pageHeight="620">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="grp-proxy" value="edge-gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;strokeColor=#147EBA;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="240" y="20" width="200" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-app" value="core/ (Kotlin, JVM, índice)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;strokeColor=#147EBA;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="480" y="20" width="400" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-kafka" value="Streaming" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;strokeColor=#147EBA;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="920" y="260" width="200" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="client" value="Cliente&#10;(web / mobile)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" value="Console de operação" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="envoy" value="Edge Proxy&#10;(data plane :10000)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="280" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mp" value="Control Plane&#10;(Go, Admin API :8080)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="280" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="xds" value="config.Manager +&#10;snapshot.Build&#10;(config API :18000)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="280" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="store" value="Store&#10;(SQLite / Postgres)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#C925D1;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="280" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="engine" value="Processing Engine&#10;(HTTP :8081/:8082)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="520" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="matcher" value="route-matcher&#10;(RequestMatcher,&#10;EventMatcher)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="520" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kafkaV" value="EventStreamVerticle +&#10;StreamHandler +&#10;EventBusPublisher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="520" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="refresh" value="IndexRefreshListener&#10;(Engine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="520" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="manager" value="API Manager&#10;(:8888, replicação :9090)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="720" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="search" value="search-index&#10;(índice invertido + .dat)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#C925D1;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="720" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="real" value="Backends reais&#10;dos clientes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="960" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="connect" value="Stream Connect&#10;(stream-connector:&#10;sink e source tasks)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ED7100;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="960" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="broker" value="Message broker&#10;(KRaft)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7157B;fontColor=#ffffff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="960" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e-client-envoy" value="HTTP /{cliente}/{servico}/..." style="endArrow=classic;html=1;" edge="1" parent="1" source="client" target="envoy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-mp" value="Admin API (troca)" style="endArrow=classic;html=1;" edge="1" parent="1" source="admin" target="mp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-manager" value="CRUD de recursos" style="endArrow=classic;html=1;" edge="1" parent="1" source="admin" target="manager">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-mp-xds" value="Rebuild" style="endArrow=classic;html=1;" edge="1" parent="1" source="mp" target="xds">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-mp-store" value="SQL" style="endArrow=classic;html=1;" edge="1" parent="1" source="mp" target="store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-xds-store" value="lê visão do serviço" style="endArrow=classic;html=1;" edge="1" parent="1" source="xds" target="store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-xds-envoy" value="config gRPC" style="endArrow=classic;html=1;dashed=1;" edge="1" parent="1" source="xds" target="envoy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-envoy-engine" value="virtual" style="endArrow=classic;html=1;" edge="1" parent="1" source="envoy" target="engine">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-envoy-real" value="real (TLS/SNI se https)" style="endArrow=classic;html=1;" edge="1" parent="1" source="envoy" target="real">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="30" />
+              <mxPoint x="1020" y="30" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-engine-search" value="consulta" style="endArrow=classic;html=1;" edge="1" parent="1" source="engine" target="search">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-engine-matcher" value="veredito" style="endArrow=classic;html=1;" edge="1" parent="1" source="engine" target="matcher">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-kafkaV-matcher" value="EventMatcher" style="endArrow=classic;html=1;" edge="1" parent="1" source="kafkaV" target="matcher">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-kafkaV-search" value="streamQuery" style="endArrow=classic;html=1;" edge="1" parent="1" source="kafkaV" target="search">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-manager-search" value="escreve índice e .dat" style="endArrow=classic;html=1;" edge="1" parent="1" source="manager" target="search">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-manager-refresh" value="replicação (commit)" style="endArrow=classic;html=1;dashed=1;" edge="1" parent="1" source="manager" target="refresh">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="90" />
+              <mxPoint x="860" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-refresh-search" value="atualiza reader" style="endArrow=classic;html=1;" edge="1" parent="1" source="refresh" target="search">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-connect-kafkaV" value="event bus clusterizado (cluster)" style="endArrow=classic;html=1;dashed=1;" edge="1" parent="1" source="connect" target="kafkaV">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-broker-connect" value="records" style="endArrow=classic;html=1;dashed=1;" edge="1" parent="1" source="broker" target="connect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

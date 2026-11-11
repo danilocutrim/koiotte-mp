@@ -1,0 +1,5 @@
+{
+  "name": "project-documenter",
+  "version": "0.1.0",
+  "description": "Documenta projetos: analisa o código, escreve o fluxo em linguagem natural e gera diagramas Mermaid e draw.io."
+}
