@@ -1,0 +1,936 @@
+api:
+  name: "testapi"
+  description: "JMeter load-test api"
+  version: "1.0.0"
+paths:
+  /health:
+    get:
+      stubs:
+      - id: "a8a94b28bcc0eeb2"
+        name: "health-check"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"status\":\"UP\",\"service\":\"testapi\"}"
+          delay: 0
+  /users:
+    get:
+      stubs:
+      - id: "2fc14d0cc59c45a2"
+        name: "list-users"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "[{\"id\":1,\"name\":\"Alice\"},{\"id\":2,\"name\":\"Bob\"}]"
+          delay: 0
+    post:
+      stubs:
+      - id: "1833c4c969ec2ac2"
+        name: "create-user"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 201
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          - name: "Location"
+            value: "/users/42"
+          body: "{\"id\":42,\"name\":\"NewUser\",\"created\":true}"
+          delay: 0
+  /users/{slug}:
+    get:
+      stubs:
+      - id: "0b0f7c5a31a45f8c"
+        name: "get-user-fallback"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"fallback\",\"slug\":\"any-value\"}"
+          delay: 0
+      - id: "64067282d3363e5b"
+        name: "get-user-admin"
+        active: true
+        match:
+          pathVariables:
+          - name: "slug"
+            value: "admin"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"exact-constraint\",\"slug\":\"admin\",\"role\":\"administrator\"\
+            }"
+          delay: 0
+      - id: "151133a37f9391f5"
+        name: "get-user-numeric-id"
+        active: true
+        match:
+          pathVariables:
+          - name: "slug"
+            value: "$regex\\d+"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"regex-constraint\",\"slug\":\"numeric-id\",\"matched\"\
+            :\"\\d+\"}"
+          delay: 0
+      - id: "f52fe40881e0d10b"
+        name: "get-user-error"
+        active: true
+        match:
+          pathVariables:
+          - name: "slug"
+            value: "error"
+          headers: []
+          queryParams: []
+        response:
+          status: 500
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"error\":\"Internal Server Error\",\"message\":\"Simulated failure\"\
+            }"
+          delay: 0
+    delete:
+      stubs:
+      - id: "f2b612af3a101dc0"
+        name: "delete-user"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 204
+          headers: []
+          delay: 0
+    put:
+      stubs:
+      - id: "7aff3ea56d4c0593"
+        name: "put-user-slug"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"action\":\"updated\",\"slug\":\"admin\",\"updatedAt\":\"{{now}}\"\
+            }"
+          delay: 0
+      - id: "b5803e3ab5e05167"
+        name: "put-user-admin"
+        active: true
+        match:
+          pathVariables:
+          - name: "slug"
+            value: "admin"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"exact-put-admin\",\"role\":\"superadmin\",\"action\"\
+            :\"privileged-update\"}"
+          delay: 0
+    patch:
+      stubs:
+      - id: "40431ed263b380ce"
+        name: "patch-user-slug"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ result = { action: 'patched', fields: Object.keys(input), slug: request.pathParams.slug\
+            \ };\nJSON.stringify(result);"
+          delay: 0
+      - id: "81fbe66318dd9b33"
+        name: "patch-user-admin"
+        active: true
+        match:
+          pathVariables:
+          - name: "slug"
+            value: "admin"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"exact-patch-admin\",\"privileged\":true,\"action\":\"\
+            admin-patch\"}"
+          delay: 0
+  /orders:
+    get:
+      stubs:
+      - id: "ad3e8eb10bfe0a68"
+        name: "list-orders"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "[{\"orderId\":\"ORD-001\",\"total\":99.90},{\"orderId\":\"ORD-002\"\
+            ,\"total\":150.00}]"
+          delay: 0
+    post:
+      stubs:
+      - id: "00c80005c22e3f2d"
+        name: "create-order"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 201
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ total = (input.qty || 0) * (input.unitPrice || 0);\nJSON.stringify({\
+            \ orderId: 'ORD-NEW', product: input.product, qty: input.qty, unitPrice:\
+            \ input.unitPrice, total: total, status: 'created' });"
+          delay: 0
+  /orders/{orderId}:
+    get:
+      stubs:
+      - id: "5fbefd151d0359b1"
+        name: "get-order-byid"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"orderId\":\"ORD-001\",\"total\":99.90,\"items\":[{\"product\"\
+            :\"Widget\",\"qty\":2}]}"
+          delay: 0
+    put:
+      stubs:
+      - id: "6e038c2d62a7d106"
+        name: "put-order-byid"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"orderId\":\"42\",\"status\":\"updated\",\"updatedAt\":\"{{now}}\"\
+            }"
+          delay: 0
+      - id: "d5cb3b0ade2cbc3d"
+        name: "put-order-ord001"
+        active: true
+        match:
+          pathVariables:
+          - name: "orderId"
+            value: "ORD-001"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"exact-order-update\",\"orderId\":\"ORD-001\",\"priority\"\
+            :\"high\",\"status\":\"expedited\"}"
+          delay: 0
+    patch:
+      stubs:
+      - id: "6a1a2d5ae843481a"
+        name: "patch-order-byid"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"status\":\"partially-updated\"}"
+          delay: 0
+    delete:
+      stubs:
+      - id: "c113b84490f77d3b"
+        name: "delete-order-byid"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"deleted\":true,\"deletedAt\":\"{{now}}\"}"
+          delay: 0
+      - id: "de5bec1a0aaf69f1"
+        name: "delete-order-ord001"
+        active: true
+        match:
+          pathVariables:
+          - name: "orderId"
+            value: "ORD-001"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"exact-order-delete\",\"orderId\":\"ORD-001\",\"refundIssued\"\
+            :true,\"deleted\":true}"
+          delay: 0
+  /org/{o}/user/{u}:
+    get:
+      stubs:
+      - id: "daae61b481aec91d"
+        name: "org-user-acme-bob"
+        active: true
+        match:
+          pathVariables:
+          - name: "o"
+            value: "acme"
+          - name: "u"
+            value: "bob"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"exact-multi-constraint\",\"org\":\"acme\",\"user\":\"\
+            bob\",\"role\":\"developer\"}"
+          delay: 0
+      - id: "2549ff8ee9e728ef"
+        name: "org-user-fallback"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"fallback\",\"org\":\"any\",\"user\":\"any\"}"
+          delay: 0
+      - id: "77157104f4832110"
+        name: "org-user-handlebars-multi"
+        active: true
+        match:
+          pathVariables:
+          - name: "o"
+            value: "tpl"
+          - name: "u"
+            value: "demo"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"org\":\"acme\",\"user\":\"demo\",\"source\":\"handlebars-multi-pathParams\"\
+            }"
+          delay: 0
+  /greet:
+    get:
+      stubs:
+      - id: "48d9c5c3f4d459ae"
+        name: "greet-handlebars"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"id\":\"{{uuid}}\",\"message\":\"Hello from Koiotte!\",\"timestamp\"\
+            :\"{{now}}\",\"randomValue\":\"{{randomInt 1 100}}\"}"
+          delay: 0
+  /dynamic:
+    get:
+      stubs:
+      - id: "823df1579831d35c"
+        name: "dynamic-handlebars"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"greeting\":\"Hello {{request.queryParams.name}}!\",\"lang\":\"\
+            {{request.queryParams.lang}}\",\"userAgent\":\"{{request.headers.User-Agent}}\"\
+            ,\"generatedAt\":\"{{now}}\",\"requestId\":\"{{uuid}}\"}"
+          delay: 0
+  /calc:
+    get:
+      stubs:
+      - id: "02762de2ed391dbf"
+        name: "calc-javascript"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst a = parseInt(request.queryParams.a || '0');\nconst\
+            \ b = parseInt(request.queryParams.b || '0');\nconst op = request.queryParams.op\
+            \ || 'add';\nlet result = 0;\nif (op === 'add') result = a + b;\nelse\
+            \ if (op === 'sub') result = a - b;\nelse if (op === 'mul') result = a\
+            \ * b;\nelse if (op === 'div') result = b !== 0 ? a / b : 'Infinity';\n\
+            JSON.stringify({ a, b, op, result });"
+          delay: 0
+  /echo:
+    post:
+      stubs:
+      - id: "240d26b3e29173b0"
+        name: "echo-javascript"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ output = { echo: true, received: input, processedAt: new Date().toISOString(),\
+            \ headers: request.headers };\nJSON.stringify(output);"
+          delay: 0
+  /products/{id}:
+    get:
+      stubs:
+      - id: "b54aebe029659610"
+        name: "product-by-id-handlebars"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"productId\":\"123\",\"name\":\"Product 123\",\"source\":\"handlebars-pathParams\"\
+            }"
+          delay: 0
+      - id: "5972989271d60361"
+        name: "product-by-id-graaljs"
+        active: true
+        match:
+          pathVariables:
+          - name: "id"
+            value: "$regex\\d+"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst pid = request.pathParams.id;\nJSON.stringify({\
+            \ productId: pid, computed: parseInt(pid) * 2, source: 'graaljs-pathParams'\
+            \ });"
+          delay: 0
+  /profile/{username}:
+    get:
+      stubs:
+      - id: "a3c093102c552f07"
+        name: "profile-combined"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"username\":\"johndoe\",\"format\":\"{{request.queryParams.format}}\"\
+            ,\"source\":\"pathParams-queryParams-combined\"}"
+          delay: 0
+  /webhooks/{provider}:
+    post:
+      stubs:
+      - id: "9ec4c2874258bd64"
+        name: "webhook-fallback"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ provider = request.pathParams.provider;\nJSON.stringify({ provider:\
+            \ provider, event: input, status: 'received', source: 'fallback' });"
+          delay: 0
+      - id: "748beb22b1fd72a8"
+        name: "webhook-stripe"
+        active: true
+        match:
+          pathVariables:
+          - name: "provider"
+            value: "stripe"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ amount = input.amount || 0;\nJSON.stringify({ provider: 'stripe', type:\
+            \ input.type, amountCents: amount, amountFormatted: '$' + (amount / 100).toFixed(2),\
+            \ processed: true });"
+          delay: 0
+      - id: "cc125a85bba0f1f8"
+        name: "webhook-github"
+        active: true
+        match:
+          pathVariables:
+          - name: "provider"
+            value: "github"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"provider\":\"github\",\"status\":\"acknowledged\",\"action\":\"\
+            processed\"}"
+          delay: 0
+  /notifications:
+    post:
+      stubs:
+      - id: "ea34dd13b9dc83c2"
+        name: "create-notification"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 201
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nif (!input.title)\
+            \ { JSON.stringify({ error: 'title is required' }); } else { JSON.stringify({\
+            \ id: 'NOTIF-' + Date.now(), title: input.title, channel: input.channel\
+            \ || 'email', status: 'created' }); }"
+          delay: 0
+  /notifications/{notifId}:
+    put:
+      stubs:
+      - id: "13295c674da86da9"
+        name: "update-notification"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ notifId = request.pathParams.notifId;\nJSON.stringify({ id: notifId,\
+            \ ...input, status: 'updated', updatedAt: new Date().toISOString() });"
+          delay: 0
+    patch:
+      stubs:
+      - id: "a043fc453ed1f78b"
+        name: "patch-notification"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"id\":\"n123\",\"status\":\"patched\",\"patchedAt\":\"{{now}}\"\
+            }"
+          delay: 0
+    delete:
+      stubs:
+      - id: "9653debee45f052c"
+        name: "delete-notification"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"id\":\"n123\",\"deleted\":true,\"deletedAt\":\"{{now}}\"}"
+          delay: 0
+  /bulk/import:
+    post:
+      stubs:
+      - id: "389764f4f1f0c4c5"
+        name: "bulk-import"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 201
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst items = JSON.parse(request.body || '[]');\nconst\
+            \ count = Array.isArray(items) ? items.length : 0;\nJSON.stringify({ imported:\
+            \ count, status: 'completed', items: Array.isArray(items) ? items.map((it,\
+            \ i) => ({ index: i, ...it, imported: true })) : [] });"
+          delay: 0
+  /search:
+    post:
+      stubs:
+      - id: "f735fbc1ae98dbcc"
+        name: "search-query"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ format = request.queryParams.format || 'full';\nconst results = [{ id:\
+            \ 1, match: input.query || 'all' }, { id: 2, match: input.query || 'all'\
+            \ }];\nJSON.stringify({ query: input.query, format: format, total: results.length,\
+            \ results: format === 'compact' ? results.map(r => r.id) : results });"
+          delay: 0
+  /auth/login:
+    post:
+      stubs:
+      - id: "7202baded6bd8e0d"
+        name: "auth-login"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nif (input.username\
+            \ === 'admin' && input.password === 'secret') { JSON.stringify({ token:\
+            \ 'tok-' + Date.now(), user: input.username, role: 'admin', expiresIn:\
+            \ 3600 }); } else { JSON.stringify({ error: 'invalid_credentials', message:\
+            \ 'Bad username or password' }); }"
+          delay: 0
+  /invoices:
+    post:
+      stubs:
+      - id: "5723f78fad278cfc"
+        name: "create-invoice"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 201
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ items = input.items || [];\nconst total = items.reduce((s, i) => s +\
+            \ (i.price || 0) * (i.qty || 1), 0);\nJSON.stringify({ invoiceId: 'INV-'\
+            \ + Date.now(), customer: input.customer, items: items, total: total,\
+            \ status: 'draft' });"
+          delay: 0
+  /invoices/{invoiceId}:
+    put:
+      stubs:
+      - id: "30b81b2a01081695"
+        name: "update-invoice"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"invoiceId\":\"inv-001\",\"status\":\"updated\",\"updatedAt\":\"\
+            {{now}}\"}"
+          delay: 0
+  /invoices/{invoiceId}/items:
+    post:
+      stubs:
+      - id: "0dc319dd9f86b033"
+        name: "add-invoice-item"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 201
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ invoiceId = request.pathParams.invoiceId;\nconst lineTotal = (input.price\
+            \ || 0) * (input.qty || 1);\nJSON.stringify({ invoiceId: invoiceId, itemId:\
+            \ 'ITEM-' + Date.now(), name: input.name, price: input.price, qty: input.qty,\
+            \ lineTotal: lineTotal });"
+          delay: 0
+  /invoices/{invoiceId}/items/{itemId}:
+    put:
+      stubs:
+      - id: "d87b915d609d627d"
+        name: "update-invoice-item"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ invoiceId = request.pathParams.invoiceId;\nconst itemId = request.pathParams.itemId;\n\
+            JSON.stringify({ invoiceId: invoiceId, itemId: itemId, ...input, status:\
+            \ 'updated' });"
+          delay: 0
+    delete:
+      stubs:
+      - id: "ccf7f969701d41ae"
+        name: "delete-invoice-item"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"invoiceId\":\"inv-001\",\"itemId\":\"item-42\",\"deleted\":true,\"\
+            deletedAt\":\"{{now}}\"}"
+          delay: 0
+  /events/{category}:
+    post:
+      stubs:
+      - id: "61f60a2f3f4d9ef0"
+        name: "create-event"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 201
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ category = request.pathParams.category;\nJSON.stringify({ eventId: 'EVT-'\
+            \ + Date.now(), category: category, ...input, createdAt: new Date().toISOString()\
+            \ });"
+          delay: 0
+  /events/{category}/{eventId}:
+    put:
+      stubs:
+      - id: "215185e2410a512a"
+        name: "update-event-fallback"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ category = request.pathParams.category;\nconst eventId = request.pathParams.eventId;\n\
+            JSON.stringify({ eventId: eventId, category: category, ...input, status:\
+            \ 'updated', source: 'fallback' });"
+          delay: 0
+      - id: "93332c945156940e"
+        name: "update-event-critical-001"
+        active: true
+        match:
+          pathVariables:
+          - name: "category"
+            value: "critical"
+          - name: "eventId"
+            value: "evt-001"
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"type\":\"exact-event-update\",\"category\":\"critical\",\"eventId\"\
+            :\"evt-001\",\"priority\":\"highest\",\"status\":\"escalated\"}"
+          delay: 0
+    patch:
+      stubs:
+      - id: "7f4bb67ad305bf04"
+        name: "patch-event"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ category = request.pathParams.category;\nconst eventId = request.pathParams.eventId;\n\
+            JSON.stringify({ eventId: eventId, category: category, patchedFields:\
+            \ Object.keys(input), status: 'patched' });"
+          delay: 0
+    delete:
+      stubs:
+      - id: "56d817c4a018c88d"
+        name: "delete-event"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "{\"category\":\"info\",\"eventId\":\"evt-456\",\"deleted\":true,\"\
+            deletedAt\":\"{{now}}\"}"
+          delay: 0
+  /transform:
+    post:
+      stubs:
+      - id: "0513e6d4305d249f"
+        name: "transform-data"
+        active: true
+        match:
+          pathVariables: []
+          headers: []
+          queryParams: []
+        response:
+          status: 200
+          headers:
+          - name: "Content-Type"
+            value: "application/json"
+          body: "// @script\nconst input = JSON.parse(request.body || '{}');\nconst\
+            \ format = request.queryParams.format || 'default';\nlet result;\nif (format\
+            \ === 'flat') { result = { flat: true, keys: Object.keys(input), values:\
+            \ Object.values(input) }; } else if (format === 'wrapped') { result =\
+            \ { wrapper: { data: input, meta: { format: 'wrapped' } } }; } else {\
+            \ result = { data: input, format: format, transformed: true }; }\nJSON.stringify(result);"
+          delay: 0
+channels: []
